@@ -26,7 +26,7 @@ public class UserService : IUserService
     {
         return (await this._repository.GetAllAsync()).Select(dbUser => new User
         {
-            Id = dbUser.IDUser,
+            Id = dbUser.id,
             username = dbUser.username,
             password = dbUser.password,
             Type = dbUser.Type,
@@ -39,10 +39,10 @@ public class UserService : IUserService
     public async Task<User?> GetAsync(int id)
     {
         return (await this._repository.GetAllAsync())
-            .Where(dbUser => dbUser.IDUser == id)
+            .Where(dbUser => dbUser.id == id)
             .Select(dbUser => new User
             {
-                Id = dbUser.IDUser,
+                Id = dbUser.id,
                 username = dbUser.username,
                 password = dbUser.password,
                 Type = dbUser.Type,

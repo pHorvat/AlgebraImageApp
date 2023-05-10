@@ -13,7 +13,7 @@ public class DbUser
     public DateTime lastPackageChange { get; set; }*/
     
     [SqlIdentity]
-    public int IDUser { get; set; }
+    public int id { get; set; }
     public string username { get; set; }
     public string password { get; set; }
     public UserRole Type { get; set; } 
