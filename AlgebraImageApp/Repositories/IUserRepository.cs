@@ -14,7 +14,7 @@ public interface IUserRepository
     public int consumption { get; set; }
     public DateTime lastPackageChange { get; set; }*/
 
-    Task<int> CreateAsync(string username, string password, UserRole type, UserTier tier);
+    Task<int> CreateAsync(string username, string password, string type, string tier);
 
     Task DeleteAsync(int id);
     public Task<IEnumerable<DbUser>> GetAllAsync();

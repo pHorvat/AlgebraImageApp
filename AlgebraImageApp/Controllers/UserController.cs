@@ -44,6 +44,7 @@ public class UserController : ControllerBase
      }
      
      [HttpPost]
+     [AllowAnonymous]
      public async Task<IActionResult> CreateUserAsync(CreateUserCommand command)
      {
           if (this.ModelState.IsValid == false)

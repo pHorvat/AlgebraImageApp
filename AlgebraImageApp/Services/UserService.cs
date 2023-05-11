@@ -26,29 +26,29 @@ public class UserService : IUserService
     {
         return (await this._repository.GetAllAsync()).Select(dbUser => new User
         {
-            Id = dbUser.id,
-            username = dbUser.username,
-            password = dbUser.password,
+            Id = dbUser.Id,
+            Username = dbUser.Username,
+            Password = dbUser.Password,
             Type = dbUser.Type,
             Tier = dbUser.Tier,
-            consumption = dbUser.consumption,
-            lastPackageChange = dbUser.lastPackageChange
+            Consumption = dbUser.Consumption,
+            LastPackageChange = dbUser.LastPackageChange
         });
     }
 
     public async Task<User?> GetAsync(int id)
     {
         return (await this._repository.GetAllAsync())
-            .Where(dbUser => dbUser.id == id)
+            .Where(dbUser => dbUser.Id == id)
             .Select(dbUser => new User
             {
-                Id = dbUser.id,
-                username = dbUser.username,
-                password = dbUser.password,
+                Id = dbUser.Id,
+                Username = dbUser.Username,
+                Password = dbUser.Password,
                 Type = dbUser.Type,
                 Tier = dbUser.Tier,
-                consumption = dbUser.consumption,
-                lastPackageChange = dbUser.lastPackageChange
+                Consumption = dbUser.Consumption,
+                LastPackageChange = dbUser.LastPackageChange
             })
             .SingleOrDefault();
     }
@@ -57,10 +57,10 @@ public class UserService : IUserService
     
     public async Task<int> CreateAsync(CreateUserCommand command)
     {
-        string username = command.username;
-        string password = command.password;
-        UserRole type = command.Type;
-        UserTier tier = command.Tier;
+        string username = command.Username;
+        string password = command.Password;
+        string type = command.Type;
+        string tier = command.Tier;
 
         int id = await this._repository.CreateAsync(username, password, type, tier);
         return id; 
@@ -71,18 +71,18 @@ public class UserService : IUserService
        
         UpdateUserProps props = new UpdateUserProps
         {
-            IDUser = command.id
+            IdUser = command.Id
         };
 
-        User? current = await this.GetAsync(command.id);
+        User? current = await this.GetAsync(command.Id);
 
         if (current is null)
         {
-            throw new ArgumentNullException($"No User found for id: {command.id}");
+            throw new ArgumentNullException($"No User found for id: {command.Id}");
         }
 
-        props.username = command.username ?? current.username;
-        props.password = command.password ?? current.password;
+        props.Username = command.Username ?? current.Username;
+        props.Password = command.Password ?? current.Password;
         props.Tier = command.Tier;
         props.Type = command.Type;
 

@@ -12,11 +12,11 @@ public class User
     UNIQUE (username)*/
     
     public int Id { get; set; }
-    public string username { get; set; } = string.Empty;
-    public string password { get; set; } = string.Empty;
-    public UserRole Type { get; set; } 
-    public UserTier Tier { get; set; } 
-    public int consumption { get; set; }
-    public DateTime lastPackageChange { get; set; }
+    public string Username { get; set; } = string.Empty;
+    public string Password { get; set; } = string.Empty;
+    public string Type { get; set; } = "Anonymous";
+    public string Tier { get; set; } = "Free";
+    public int Consumption { get; set; }
+    public DateTime LastPackageChange { get; set; }
 
 }

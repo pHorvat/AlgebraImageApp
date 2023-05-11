@@ -6,20 +6,20 @@ public class UpdateUserCommand
 {
     
     [Required]
-    public int id { get; set; }
+    public int Id { get; set; }
     
     
     [Required]
     [MaxLength(50)]
-    public string username { get; set; }
+    public string Username { get; set; }
     [MinLength(6)]
-    public string password { get; set; }
+    public string Password { get; set; }
 
-    public UserRole Type { get; set; }
+    public string Type { get; set; }
 
-    public UserTier Tier { get; set; }
+    public string Tier { get; set; }
 
-    public int consumption { get; set; }
+    public int Consumption { get; set; }
     
-    public DateTime lastPackageChange { get; set; }
+    public DateTime LastPackageChange { get; set; }
 }

@@ -1,14 +1,29 @@
 ﻿using MsSqlSimpleClient.Attributes.Procedures;
+using MsSqlSimpleClient.Attributes.SqlTable;
 
 namespace AlgebraImageApp.Models.Procedures;
 
 public class CreateUserProps
 {
-    public string username { get; set; }
-    public string password { get; set; }
-    public UserRole Type { get; set; } 
-    public UserTier Tier { get; set; }
+    [SqlParameterName("p_username")]
+    public string Username { get; set; }
+    
+    [SqlParameterName("p_password")]
+    public string Password { get; set; }
+    
+    [SqlParameterName("p_type")]
+    public string Type { get; set; } 
+    
+    [SqlParameterName("p_package")]
+    public string Tier { get; set; }
+
+    [SqlParameterName("p_current_consumption")] 
+    public int Consumption { get; set; } = 0;
+    
+    [SqlParameterName("p_last_package_change")] 
+    public DateTime LastPackageChange { get; set; } = DateTime.UnixEpoch;
     
     [SqlOutput]
-    public int IDUser { get; set; }
+    [SqlParameterName("id")]
+    public int IdUser { get; set; }
 }

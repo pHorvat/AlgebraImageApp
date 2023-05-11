@@ -16,17 +16,17 @@ public class SqlUserRepository : IUserRepository
         this._procedureClient = procedureClient;
     }
     
-    public async Task<int> CreateAsync(string username, string password, UserRole type, UserTier tier)
+    public async Task<int> CreateAsync(string username, string password, string type, string tier)
     {
         CreateUserProps props = new CreateUserProps
         {
-            username = username,
-            password = password,
+            Username = username,
+            Password = password,
             Type = type,
             Tier = tier
         };
         await this._procedureClient.ExecuteNonQueryAsync("CreateUser", props);
-        return props.IDUser;
+        return props.IdUser;
     }
 
     public async Task DeleteAsync(int id)

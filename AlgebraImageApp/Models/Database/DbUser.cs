@@ -13,11 +13,23 @@ public class DbUser
     public DateTime lastPackageChange { get; set; }*/
     
     [SqlIdentity]
-    public int id { get; set; }
-    public string username { get; set; }
-    public string password { get; set; }
-    public UserRole Type { get; set; } 
-    public UserTier Tier { get; set; }
-    public int consumption { get; set; } = 0;
-    public DateTime lastPackageChange { get; set; } = DateTime.UnixEpoch;
+    [SqlColumnName("id")]
+    public int Id { get; set; }
+    [SqlColumnName("username")]
+    public string Username { get; set; }
+    [SqlColumnName("password")]
+    public string Password { get; set; }
+    
+    [SqlColumnName("type")]
+    public string Type { get; set; } 
+    
+    [SqlColumnName("package")]
+    public string Tier { get; set; }
+    
+    [SqlColumnName("current_consumption")]
+    
+    public int Consumption { get; set; } = 0;
+    
+    [SqlColumnName("last_package_change")]
+    public DateTime LastPackageChange { get; set; } = DateTime.UnixEpoch;
 }

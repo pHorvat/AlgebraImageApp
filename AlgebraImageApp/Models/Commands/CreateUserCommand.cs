@@ -16,21 +16,19 @@ public class CreateUserCommand
     
     [Required]
     [MaxLength(50)]
-    public string username { get; set; } = string.Empty;
+    public string Username { get; set; } = string.Empty;
     [Required]
     [MinLength(6)]
-    public string password { get; set; } = string.Empty;
+    public string Password { get; set; } = string.Empty;
+
+    [Required] public string Type { get; set; } = "Anonymous";
+
+    [Required] public string Tier { get; set; } = "Free";
 
     [Required] 
-    public UserRole Type { get; set; } = UserRole.Anonymous;
-
-    [Required] 
-    public UserTier Tier { get; set; } = UserTier.FREE;
-
-    [Required] 
-    public int consumption { get; set; } = 0;
+    public int Consumption { get; set; } = 0;
     
-    public DateTime lastPackageChange { get; set; } = DateTime.UnixEpoch;
+    public DateTime LastPackageChange { get; set; } = DateTime.UnixEpoch;
     
 
 
