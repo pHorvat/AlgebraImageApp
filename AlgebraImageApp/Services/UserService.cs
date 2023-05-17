@@ -52,6 +52,23 @@ public class UserService : IUserService
             })
             .SingleOrDefault();
     }
+    
+    public async Task<User?> GetUsernameAsync(string username)
+    {
+        return (await this._repository.GetAllAsync())
+            .Where(dbUser => dbUser.Username == username)
+            .Select(dbUser => new User
+            {
+                Id = dbUser.Id,
+                Username = dbUser.Username,
+                Password = dbUser.Password,
+                Type = dbUser.Type,
+                Tier = dbUser.Tier,
+                Consumption = dbUser.Consumption,
+                LastPackageChange = dbUser.LastPackageChange
+            })
+            .SingleOrDefault();
+    }
 
     
     
