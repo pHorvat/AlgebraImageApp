@@ -14,11 +14,11 @@ public interface IUserRepository
     public int consumption { get; set; }
     public DateTime lastPackageChange { get; set; }*/
 
-    Task<int> CreateAsync(string username, string password, string type, string tier);
+    Task<int> CreateUserAsync(string username, string password, string type, string tier);
 
-    Task DeleteAsync(int id);
-    public Task<IEnumerable<DbUser>> GetAllAsync();
-    Task UpdateAsync(UpdateUserProps props);
+    Task DeleteUserAsync(int id);
+    public Task<IEnumerable<DbUser>> GetAllUsersAsync();
+    Task UpdateUserAsync(UpdateUserProps props);
 
     
 }

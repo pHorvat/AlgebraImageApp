@@ -21,9 +21,11 @@ public class CreateUserCommand
     [MinLength(6)]
     public string Password { get; set; } = string.Empty;
 
-    [Required] public string Type { get; set; } = "Anonymous";
+    [Required] 
+    public string Type { get; set; } = "Anonymous";
 
-    [Required] public string Tier { get; set; } = "Free";
+    [Required] 
+    public string Tier { get; set; } = "Free";
 
     [Required] 
     public int Consumption { get; set; } = 0;

@@ -15,8 +15,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSingleton<ISqlProcedureClient>(new SqlProcedureClient("Server=algebrainstaserv.database.windows.net;Database=AlgebraInstaDb;User Id=pHorva;Password=m354Hd9DtMWf27azAFq;"));
 
 builder.Services.AddSingleton<IUserRepository, SqlUserRepository>();
+builder.Services.AddSingleton<IPhotosRepository, SqlPhotosRepository>();
 
 builder.Services.AddSingleton<IUserService,UserService>();
+builder.Services.AddSingleton<IPhotosService,PhotoService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

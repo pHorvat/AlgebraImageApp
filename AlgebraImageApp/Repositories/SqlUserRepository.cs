@@ -16,7 +16,7 @@ public class SqlUserRepository : IUserRepository
         this._procedureClient = procedureClient;
     }
     
-    public async Task<int> CreateAsync(string username, string password, string type, string tier)
+    public async Task<int> CreateUserAsync(string username, string password, string type, string tier)
     {
         CreateUserProps props = new CreateUserProps
         {
@@ -29,19 +29,19 @@ public class SqlUserRepository : IUserRepository
         return props.IdUser;
     }
 
-    public async Task DeleteAsync(int id)
+    public async Task DeleteUserAsync(int id)
     {
         await this._procedureClient.ExecuteNonQueryAsyncWith("DeleteUser", id);
 
     }
 
-    public async Task<IEnumerable<DbUser>> GetAllAsync()
+    public async Task<IEnumerable<DbUser>> GetAllUsersAsync()
     {
         DataSet data = await this._procedureClient.ExecuteQueryAsync("GetUsers");
         return data.ConvertTo<DbUser>();
     }
     
-            public async Task UpdateAsync(UpdateUserProps props)
+            public async Task UpdateUserAsync(UpdateUserProps props)
         {
             await this._procedureClient.ExecuteNonQueryAsync("UpdateUser", props);
         }

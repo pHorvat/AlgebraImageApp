@@ -24,7 +24,7 @@ public class UserService : IUserService
     
     public async Task<IEnumerable<User>> GetAllAsync()
     {
-        return (await this._repository.GetAllAsync()).Select(dbUser => new User
+        return (await this._repository.GetAllUsersAsync()).Select(dbUser => new User
         {
             Id = dbUser.Id,
             Username = dbUser.Username,
@@ -38,7 +38,7 @@ public class UserService : IUserService
 
     public async Task<User?> GetAsync(int id)
     {
-        return (await this._repository.GetAllAsync())
+        return (await this._repository.GetAllUsersAsync())
             .Where(dbUser => dbUser.Id == id)
             .Select(dbUser => new User
             {
@@ -55,7 +55,7 @@ public class UserService : IUserService
     
     public async Task<User?> GetUsernameAsync(string username)
     {
-        return (await this._repository.GetAllAsync())
+        return (await this._repository.GetAllUsersAsync())
             .Where(dbUser => dbUser.Username == username)
             .Select(dbUser => new User
             {
@@ -79,7 +79,7 @@ public class UserService : IUserService
         string type = command.Type;
         string tier = command.Tier;
 
-        int id = await this._repository.CreateAsync(username, password, type, tier);
+        int id = await this._repository.CreateUserAsync(username, password, type, tier);
         return id; 
     }
 
@@ -103,12 +103,12 @@ public class UserService : IUserService
         props.Tier = command.Tier;
         props.Type = command.Type;
 
-        await this._repository.UpdateAsync(props);
+        await this._repository.UpdateUserAsync(props);
     
     }
 
     public async Task DeleteAsync(int id)
     {
-        await this._repository.DeleteAsync(id);
+        await this._repository.DeleteUserAsync(id);
     }
 }
