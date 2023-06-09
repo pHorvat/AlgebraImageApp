@@ -6,6 +6,7 @@ namespace AlgebraImageApp.Services;
 public interface IPhotosService
 {
     Task<IEnumerable<Photos>> GetAllPhotos();
+    Task<IEnumerable<Photos>> GetAllPhotosOfUser(int id);
     Task<Photos?> GetPhotoAsync(int id);
     Task<int> AddPhotoAsync(AddPhotoCommand command);
     //Task UpdateAsync(UpdateUserCommand command);

@@ -40,6 +40,20 @@ public class PhotoController : ControllerBase
         return this.Ok(photo);
     }
     
+    [HttpGet("user/{id}")]
+    [AllowAnonymous]
+    public async Task<IActionResult> GetAllPhotosOfUserAsync(int id)
+    {
+        IEnumerable<Photos> photos = await this._photosService.GetAllPhotosOfUser(id);
+
+        if (photos is null)
+        {
+            return this.NotFound();
+        }
+
+        return this.Ok(photos);
+    }
+    
     [HttpPost]
     [Authorize]
     public async Task<IActionResult> CreatePhotoAsync(AddPhotoCommand command)

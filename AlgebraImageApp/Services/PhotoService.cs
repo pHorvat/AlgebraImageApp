@@ -27,6 +27,20 @@ public class PhotoService : IPhotosService
             Url = dbPhoto.Url
         });
     }
+    
+    public async Task<IEnumerable<Photos>> GetAllPhotosOfUser(int id)
+    {
+        return (await this._repository.GetAllPhotosOfUserAsync(id)).Select(dbPhoto => new Photos()
+        {
+            Id = dbPhoto.Id,
+            AuthorId = dbPhoto.AuthorId,
+            Description = dbPhoto.Description,
+            Format = dbPhoto.Format,
+            Hashtags = dbPhoto.Hashtags,
+            Upload = dbPhoto.Upload,
+            Url = dbPhoto.Url
+        });
+    }
 
     public async Task<Photos?> GetPhotoAsync(int id)
     {

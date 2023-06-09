@@ -1,6 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using AlgebraImageApp.Logger;
 using AlgebraImageApp.Models;
 using AlgebraImageApp.Models.Commands;
 using AlgebraImageApp.Services;
@@ -48,6 +49,22 @@ public class UserController : ControllerBase
 
           return this.Ok(user);
      }
+     
+     [HttpGet("u/{username}")]
+     [AllowAnonymous]
+     public async Task<IActionResult> FetchUserAsync(string username)
+     {
+          User? user = await this._userService.GetUsernameAsync(username);
+
+          if (user is null)
+          {
+               return this.NotFound();
+          }
+          
+          LoggerSingleton.Instance.Log($"Successfully retrieved user {username}.");
+          return this.Ok(user);
+     }
+     
      
      [HttpPost("register")]
      [AllowAnonymous]
@@ -103,8 +120,32 @@ public class UserController : ControllerBase
 
           var jwt = new JwtSecurityTokenHandler().WriteToken(token);
           
+          // Create a custom response object
+          var response = new
+          {
+               userTier = user.Tier,
+               userId = user.Id,
+               status = "success",
+               message = "logged in successfully",
+               data = new { username = command.Username },
+               accessToken = jwt,
+               username = command.Username,
+               user= new
+               {
+                    username = command.Username
+               }
+          };
 
-          return this.Ok(jwt);
+
+          return this.Ok(response);
+     }
+     
+     [HttpPost("logout")]
+     [AllowAnonymous] // Add the Authorize attribute to ensure the user is authenticated
+     public IActionResult Logout()
+     {
+          // You can simply return a successful response or provide any additional logic if needed
+          return Ok();
      }
      
      [HttpPost]

@@ -15,7 +15,7 @@ hashtags NVARCHAR(255),
 image_url NVARCHAR(255),
 FOREIGN KEY (author_id) REFERENCES users(id)
     );*/
-    [SqlParameterName("p_author_id")]
+    [SqlParameterName("p_authorid")]
     public int AuthorId { get; set; }
     
     [SqlParameterName("p_description")]
@@ -24,13 +24,13 @@ FOREIGN KEY (author_id) REFERENCES users(id)
     [SqlParameterName("p_upload_datetime")]
     public DateTime UploadTime { get; set; } 
     
-    [SqlParameterName("p_image_format")]
+    [SqlParameterName("p_format")]
     public string Format { get; set; }
     
     [SqlParameterName("p_hashtags")]
     public string Hashtags { get; set; }
 
-    [SqlParameterName("p_image_url")] 
+    [SqlParameterName("p_url")] 
     public string Url { get; set; } = string.Empty;
     
     [SqlOutput]
