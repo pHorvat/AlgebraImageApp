@@ -18,6 +18,7 @@ public class PhotoService : IPhotosService
     {
         return (await this._repository.GetAllPhotosAsync()).Select(dbPhoto => new Photos()
         {
+            authorUsername = dbPhoto.authorUsername,
             Id = dbPhoto.Id,
             AuthorId = dbPhoto.AuthorId,
             Description = dbPhoto.Description,
@@ -67,8 +68,9 @@ public class PhotoService : IPhotosService
         string hashtags = command.Hashtags;
         string url = command.Url;
         DateTime upload = command.Upload;
+        string authorUsername = command.authorUsername;
 
-        int id = await this._repository.AddPhotoAsync(authorId,description,format,hashtags,url);
+        int id = await this._repository.AddPhotoAsync(authorId,description,format,hashtags,url, authorUsername);
         return id; 
     }
 

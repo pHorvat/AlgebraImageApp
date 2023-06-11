@@ -16,6 +16,7 @@ public class Photos
     public int Id { get; set; } 
     public int AuthorId { get; set; }
     public string Description { get; set; } = string.Empty;
+    public string authorUsername { get; set; } = string.Empty;
     public DateTime Upload { get; set; } = DateTime.UnixEpoch;
     public string Format { get; set; } = string.Empty;
     public string Url { get; set; } = string.Empty;

@@ -9,6 +9,9 @@ public class AddPhotoCommand
     [MaxLength(300)]
     public string Description { get; set; }
     
+    [Required]
+    public string authorUsername { get; set; }
+    
     [Required] 
     public DateTime Upload { get; set; } = DateTime.UnixEpoch;
     

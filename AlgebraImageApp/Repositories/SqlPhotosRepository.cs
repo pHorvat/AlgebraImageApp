@@ -16,10 +16,11 @@ public class SqlPhotosRepository : IPhotosRepository
     }
     
     
-    public async Task<int> AddPhotoAsync(int authorid, string desciption, string format, string hashtags, string url)
+    public async Task<int> AddPhotoAsync(int authorid, string desciption, string format, string hashtags, string url, string authorusername)
     {
         AddPhotoProps props = new AddPhotoProps
         {
+            authorUsername = authorusername,
             AuthorId = authorid,
             Description = desciption,
             Format = format,

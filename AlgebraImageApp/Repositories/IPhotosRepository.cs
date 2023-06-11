@@ -17,7 +17,7 @@ FOREIGN KEY (author_id) REFERENCES users(id)
     );*/
     
     
-    Task<int> AddPhotoAsync(int authorid, string desciption, string format, string hashtags, string url);
+    Task<int> AddPhotoAsync(int authorid, string desciption, string format, string hashtags, string url, string authorusername);
 
     Task DeletePhotoAsync(int id);
     public Task<IEnumerable<DbPhotos>> GetAllPhotosAsync();

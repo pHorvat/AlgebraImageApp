@@ -24,6 +24,9 @@ public class DbPhotos
     [SqlColumnName("description")]
     public string Description { get; set; }
     
+    [SqlColumnName("authorUsername")]
+    public string authorUsername { get; set; }
+    
     [SqlColumnName("upload_datetime")]
     public DateTime Upload { get; set; } = DateTime.UnixEpoch;
     

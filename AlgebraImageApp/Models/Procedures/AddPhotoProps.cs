@@ -21,6 +21,9 @@ FOREIGN KEY (author_id) REFERENCES users(id)
     [SqlParameterName("p_description")]
     public string Description { get; set; }
     
+    [SqlParameterName("p_authorUsername")]
+    public string authorUsername { get; set; }
+    
     [SqlParameterName("p_upload_datetime")]
     public DateTime UploadTime { get; set; } 
     
