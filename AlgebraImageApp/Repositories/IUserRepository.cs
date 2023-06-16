@@ -20,5 +20,7 @@ public interface IUserRepository
     public Task<IEnumerable<DbUser>> GetAllUsersAsync();
     Task UpdateUserAsync(UpdateUserProps props);
 
-    
+    Task<int> GetUserConsumptionAsync(int id);
+
+
 }

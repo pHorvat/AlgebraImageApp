@@ -111,4 +111,10 @@ public class UserService : IUserService
     {
         await this._repository.DeleteUserAsync(id);
     }
+    
+    public async Task<int> GetConsumption(int id)
+    {
+        int consumption = await this._repository.GetUserConsumptionAsync(id);
+        return consumption;
+    }
 }

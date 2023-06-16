@@ -8,11 +8,13 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using MsSqlSimpleClient.SqlClient.Direct;
 using MsSqlSimpleClient.SqlClient.Procedures;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSingleton<ISqlProcedureClient>(new SqlProcedureClient("Server=algebrainstaserv.database.windows.net;Database=AlgebraInstaDb;User Id=pHorva;Password=m354Hd9DtMWf27azAFq;"));
+builder.Services.AddSingleton<ISqlDirectClient>(new SqlDirectClient("Server=algebrainstaserv.database.windows.net;Database=AlgebraInstaDb;User Id=pHorva;Password=m354Hd9DtMWf27azAFq;"));
 
 builder.Services.AddSingleton<IUserRepository, SqlUserRepository>();
 builder.Services.AddSingleton<IPhotosRepository, SqlPhotosRepository>();

@@ -14,7 +14,7 @@ public class User
     public int Id { get; set; }
     public string Username { get; set; } = string.Empty;
     public string Password { get; set; } = string.Empty;
-    public string Type { get; set; } = "Anonymous";
+    public string Type { get; set; } = "Registered";
     public string Tier { get; set; } = "Free";
     public int Consumption { get; set; }
     public DateTime LastPackageChange { get; set; }

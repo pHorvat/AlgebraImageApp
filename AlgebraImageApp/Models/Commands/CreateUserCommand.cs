@@ -22,7 +22,7 @@ public class CreateUserCommand
     public string Password { get; set; } = string.Empty;
 
     [Required] 
-    public string Type { get; set; } = "Anonymous";
+    public string Type { get; set; } = "Registered";
 
     [Required] 
     public string Tier { get; set; } = "Free";

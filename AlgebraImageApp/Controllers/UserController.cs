@@ -123,6 +123,7 @@ public class UserController : ControllerBase
           // Create a custom response object
           var response = new
           {
+               userType = user.Type,
                userTier = user.Tier,
                userId = user.Id,
                status = "success",
@@ -187,7 +188,14 @@ public class UserController : ControllerBase
           await this._userService.DeleteAsync(id);
           return this.Ok();
      }
-     
+          
+     [HttpGet("consumption/{id}")]
+     [AllowAnonymous]
+     public async Task<IActionResult> GetUserConsumption(int id)
+     {
+          int consumption = await this._userService.GetConsumption(id);
+          return this.Ok(consumption);
+     }
 
 }
 }

@@ -11,4 +11,5 @@ public interface IUserService
     Task<int> CreateAsync(CreateUserCommand command);
     Task UpdateAsync(UpdateUserCommand command);
     Task DeleteAsync(int id);
+    Task<int> GetConsumption(int id);
 }
