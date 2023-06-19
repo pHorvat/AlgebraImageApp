@@ -40,6 +40,21 @@ public class PhotoController : ControllerBase
         return this.Ok(photo);
     }
     
+    
+    [HttpGet("search/{searchTerm}")]
+    [AllowAnonymous]
+    public async Task<IActionResult> GetAllPhotosForSearchAsync(string searchTerm)
+    {
+        IEnumerable<Photos> photos = await this._photosService.GetAllPhotosBySearch(searchTerm);
+
+        if (photos is null)
+        {
+            return this.NotFound();
+        }
+
+        return this.Ok(photos);
+    }
+    
     [HttpGet("user/{id}")]
     [AllowAnonymous]
     public async Task<IActionResult> GetAllPhotosOfUserAsync(int id)
@@ -74,5 +89,7 @@ public class PhotoController : ControllerBase
         await this._photosService.DeletePhoto(id);
         return this.Ok();
     }
+    
+    
     
 }

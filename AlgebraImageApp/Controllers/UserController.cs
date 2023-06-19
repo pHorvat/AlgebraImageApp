@@ -142,7 +142,7 @@ public class UserController : ControllerBase
      }
      
      [HttpPost("logout")]
-     [Authorize] // Add the Authorize attribute to ensure the user is authenticated
+     [AllowAnonymous] // Add the Authorize attribute to ensure the user is authenticated
      public IActionResult Logout()
      {
           return Ok();

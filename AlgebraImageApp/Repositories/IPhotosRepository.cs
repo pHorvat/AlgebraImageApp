@@ -21,6 +21,7 @@ FOREIGN KEY (author_id) REFERENCES users(id)
 
     Task DeletePhotoAsync(int id);
     public Task<IEnumerable<DbPhotos>> GetAllPhotosAsync();
+    public Task<IEnumerable<DbPhotos>> GetAllPhotosBySearchAsync(string searchTerm);
     public Task<IEnumerable<DbPhotos>> GetAllPhotosOfUserAsync(int id);
     //Task UpdateAsync(UpdateUserProps props);
 

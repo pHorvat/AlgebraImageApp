@@ -48,4 +48,11 @@ public class SqlPhotosRepository : IPhotosRepository
         DataSet data = await this._procedureClient.ExecuteQueryAsync("GetPhotosOfUser", new { @authorId = id});
         return data.ConvertTo<DbPhotos>();    
     }
+    
+    public async Task<IEnumerable<DbPhotos>> GetAllPhotosBySearchAsync(string term)
+    {
+        DataSet data = await this._procedureClient.ExecuteQueryAsync("GetPhotosBySearch", new { @searchTerm = term});
+        return data.ConvertTo<DbPhotos>();    
+    }
+    
 }
