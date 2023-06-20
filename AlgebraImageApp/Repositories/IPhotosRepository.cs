@@ -1,4 +1,5 @@
 ﻿using AlgebraImageApp.Models.Database;
+using AlgebraImageApp.Models.Procedures;
 
 namespace AlgebraImageApp.Repositories;
 
@@ -23,6 +24,6 @@ FOREIGN KEY (author_id) REFERENCES users(id)
     public Task<IEnumerable<DbPhotos>> GetAllPhotosAsync();
     public Task<IEnumerable<DbPhotos>> GetAllPhotosBySearchAsync(string searchTerm);
     public Task<IEnumerable<DbPhotos>> GetAllPhotosOfUserAsync(int id);
-    //Task UpdateAsync(UpdateUserProps props);
+    Task UpdatePhotoAsync(UpdatePhotoProps props);
 
 }

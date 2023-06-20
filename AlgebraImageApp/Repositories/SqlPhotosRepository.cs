@@ -55,4 +55,9 @@ public class SqlPhotosRepository : IPhotosRepository
         return data.ConvertTo<DbPhotos>();    
     }
     
+    public async Task UpdatePhotoAsync(UpdatePhotoProps props)
+    {
+        await this._procedureClient.ExecuteNonQueryAsync("UpdatePhoto", props);
+    }
+    
 }

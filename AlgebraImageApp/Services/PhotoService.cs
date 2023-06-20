@@ -1,5 +1,6 @@
 ﻿using AlgebraImageApp.Models;
 using AlgebraImageApp.Models.Commands;
+using AlgebraImageApp.Models.Procedures;
 using AlgebraImageApp.Repositories;
 
 namespace AlgebraImageApp.Services;
@@ -87,6 +88,29 @@ public class PhotoService : IPhotosService
 
         int id = await this._repository.AddPhotoAsync(authorId,description,format,hashtags,url, authorUsername);
         return id; 
+    }
+    
+    public async Task UpdatePhotoAsync(UpdatePhotoCommand command)
+    {
+       
+        UpdatePhotoProps props = new UpdatePhotoProps
+        {
+            id = command.Id
+        };
+
+        Photos? current = await this.GetPhotoAsync(command.Id);
+
+        if (current is null)
+        {
+            throw new ArgumentNullException($"No Photo found for id: {command.Id}");
+        }
+
+        props.Description = command.Description ?? current.Description;
+        props.Hashtags = command.Hashtags ?? current.Hashtags;
+
+
+        await this._repository.UpdatePhotoAsync(props);
+    
     }
 
     public async Task DeletePhoto(int id)

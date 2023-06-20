@@ -10,6 +10,7 @@ public interface IPhotosService
     Task<IEnumerable<Photos>> GetAllPhotosBySearch(string term);
     Task<Photos?> GetPhotoAsync(int id);
     Task<int> AddPhotoAsync(AddPhotoCommand command);
-    //Task UpdateAsync(UpdateUserCommand command);
+    
+    Task UpdatePhotoAsync(UpdatePhotoCommand command);
     Task DeletePhoto(int id);
 }

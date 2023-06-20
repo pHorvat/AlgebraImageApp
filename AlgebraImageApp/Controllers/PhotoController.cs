@@ -90,6 +90,26 @@ public class PhotoController : ControllerBase
         return this.Ok();
     }
     
+    [HttpPut]
+    [Authorize]
+    public async Task<IActionResult> UpdatePhotoAsync(UpdatePhotoCommand command)
+    {
+        if (this.ModelState.IsValid == false)
+        {
+            return this.BadRequest(this.ModelState);
+        }
+
+        try
+        {
+            await this._photosService.UpdatePhotoAsync(command);
+            return this.Ok();
+        }
+        catch (ArgumentNullException ex)
+        {
+            return this.BadRequest(ex.Message);
+        }
+    }
+    
     
     
 }
