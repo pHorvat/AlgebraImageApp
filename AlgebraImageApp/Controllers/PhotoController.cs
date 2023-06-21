@@ -12,10 +12,11 @@ namespace AlgebraImageApp.Controllers;
 public class PhotoController : ControllerBase
 {
     private IPhotosService _photosService;
-    
-    public PhotoController(IPhotosService photosService)
+
+    public PhotoController(IPhotosService photosService )
     {
         this._photosService = photosService;
+       
     }
     
     [HttpGet]
@@ -73,6 +74,7 @@ public class PhotoController : ControllerBase
     [Authorize]
     public async Task<IActionResult> CreatePhotoAsync(AddPhotoCommand command)
     {
+
         if (this.ModelState.IsValid == false)
         {
             return this.BadRequest(this.ModelState);

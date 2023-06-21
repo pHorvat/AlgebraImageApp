@@ -162,6 +162,7 @@ public class UserController : ControllerBase
      }
      
      [HttpPut]
+     [Authorize]
      public async Task<IActionResult> UpdateUserAsync(UpdateUserCommand command)
      {
           if (this.ModelState.IsValid == false)

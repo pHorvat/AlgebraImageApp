@@ -1,6 +1,7 @@
 ﻿using AlgebraImageApp.Models;
 using AlgebraImageApp.Models.Commands;
 using AlgebraImageApp.Models.Procedures;
+using AlgebraImageApp.Patterns;
 using AlgebraImageApp.Repositories;
 
 namespace AlgebraImageApp.Services;
@@ -78,15 +79,16 @@ public class PhotoService : IPhotosService
 
     public async Task<int> AddPhotoAsync(AddPhotoCommand command)
     {
-        int authorId = command.AuthorId;
-        string description = command.Description;
-        string format = command.Format;
-        string hashtags = command.Hashtags;
-        string url = command.Url;
-        DateTime upload = command.Upload;
-        string authorUsername = command.authorUsername;
+        PhotoBuilder photoBuilder = new PhotoBuilder()
+            .SetAuthorId(command.AuthorId)
+            .SetDescription(command.Description)
+            .SetFormat(command.Format)
+            .SetUrl(command.Url)
+            .SetAuthorUsername(command.authorUsername)
+            .SetHashtags(command.Hashtags);
 
-        int id = await this._repository.AddPhotoAsync(authorId,description,format,hashtags,url, authorUsername);
+        int id = await photoBuilder.AddPhotoAsync(_repository);
+
         return id; 
     }
     

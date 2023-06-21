@@ -1,12 +1,20 @@
-﻿namespace AlgebraImageApp.Models.Procedures;
+﻿using MsSqlSimpleClient.Attributes.Procedures;
+
+namespace AlgebraImageApp.Models.Procedures;
 
 public class UpdateUserProps
 {
+    [SqlParameterName("id")]
     public int IdUser { get; set; }
-    public string Username { get; set; } = string.Empty;
-    public string Password { get; set; } = string.Empty;
-    public string Type { get; set; } = "Anonymous";
-    public string Tier { get; set; } = "Free";
+    
+    [SqlParameterName("username")]
+    public string Username { get; set; } 
+    
+    [SqlParameterName("type")]
+    public string Type { get; set; } 
+    
+    [SqlParameterName("package")]
+    public string Tier { get; set; }
 
 
 }

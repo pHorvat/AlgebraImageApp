@@ -99,7 +99,6 @@ public class UserService : IUserService
         }
 
         props.Username = command.Username ?? current.Username;
-        props.Password = command.Password ?? current.Password;
         props.Tier = command.Tier;
         props.Type = command.Type;
 
