@@ -1,5 +1,6 @@
 ﻿using AlgebraImageApp.Models;
 using AlgebraImageApp.Models.Commands;
+using AlgebraImageApp.Patterns.Facade;
 using AlgebraImageApp.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,11 +13,13 @@ namespace AlgebraImageApp.Controllers;
 public class PhotoController : ControllerBase
 {
     private IPhotosService _photosService;
+    private IUserService _userService;
 
-    public PhotoController(IPhotosService photosService )
+    public PhotoController(IPhotosService photosService, IUserService userService )
     {
         this._photosService = photosService;
-       
+        _userService = userService;
+
     }
     
     [HttpGet]
@@ -74,14 +77,22 @@ public class PhotoController : ControllerBase
     [Authorize]
     public async Task<IActionResult> CreatePhotoAsync(AddPhotoCommand command)
     {
-
+        User? user = await this._userService.GetUsernameAsync(command.authorUsername);
+        UploadCheck check = new UploadCheck();
+        
         if (this.ModelState.IsValid == false)
         {
             return this.BadRequest(this.ModelState);
         }
 
-        int id = await this._photosService.AddPhotoAsync(command);
-        return this.Ok(id);
+        if (user != null && check.CanUpload(user, command.Description, command.Hashtags))
+        {
+            int id = await this._photosService.AddPhotoAsync(command);
+            return this.Ok(id);
+        }
+
+        return this.Forbid();
+
     }
     
     [HttpDelete("{id}")]

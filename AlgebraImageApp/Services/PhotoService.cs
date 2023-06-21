@@ -79,6 +79,7 @@ public class PhotoService : IPhotosService
 
     public async Task<int> AddPhotoAsync(AddPhotoCommand command)
     {
+        
         PhotoBuilder photoBuilder = new PhotoBuilder()
             .SetAuthorId(command.AuthorId)
             .SetDescription(command.Description)
