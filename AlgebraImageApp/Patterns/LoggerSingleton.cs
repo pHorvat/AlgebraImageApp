@@ -1,53 +1,32 @@
-﻿namespace AlgebraImageApp.Logger;
-
-using System;
-using System.IO;
-
-public class LoggerSingleton
+﻿namespace AlgebraImageApp.Patterns;
+public sealed class CustomLogger
 {
-    private static LoggerSingleton instance;
-    private readonly string logFilePath;
-    private readonly object lockObj = new object();
-    
-    private LoggerSingleton()
+    private static readonly CustomLogger instance = new CustomLogger();
+    private static readonly object lockObject = new object();
+    private string logFilePath;
+
+
+    private CustomLogger()
     {
-        // Set the log file path
-        string logDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logs");
-        if (!Directory.Exists(logDirectory))
-        {
-            Directory.CreateDirectory(logDirectory);
-        }
-        logFilePath = Path.Combine(logDirectory, "app.log");
+        logFilePath = "log.txt"; // Specify the desired log file path here
+
     }
-    
-    public static LoggerSingleton Instance
+
+    public static CustomLogger Instance
     {
-        get
-        {
-            if (instance == null)
-            {
-                instance = new LoggerSingleton();
-            }
-            
-            return instance;
-        }
+        get { return instance; }
     }
-    
+
     public void Log(string message)
     {
-        string formattedMessage = $"[{DateTime.Now}] {message}";
-
-        // Log to console
-        Console.WriteLine(formattedMessage);
-        Console.WriteLine(logFilePath);
-        
-        
-        // Log to file
-        lock (lockObj)
+        lock (lockObject) //ensure thread safety when multiple threads attempt to log concurrently
         {
-            using (StreamWriter writer = new StreamWriter(logFilePath, true))
+            string currentTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+            string logEntry = $"[{currentTime}] {message}";
+            Console.WriteLine(logEntry);
+            using (StreamWriter writer = File.AppendText(logFilePath))
             {
-                writer.WriteLine(formattedMessage);
+                writer.WriteLine(logEntry);
             }
         }
     }

@@ -1,5 +1,6 @@
 ﻿using AlgebraImageApp.Models;
 using AlgebraImageApp.Models.Commands;
+using AlgebraImageApp.Patterns;
 using AlgebraImageApp.Patterns.Facade;
 using AlgebraImageApp.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -14,19 +15,20 @@ public class PhotoController : ControllerBase
 {
     private IPhotosService _photosService;
     private IUserService _userService;
-
-    public PhotoController(IPhotosService photosService, IUserService userService )
+    
+    public PhotoController(IPhotosService photosService, IUserService userService)
     {
         this._photosService = photosService;
         _userService = userService;
 
     }
-    
+
     [HttpGet]
     [AllowAnonymous]
     public async Task<IActionResult> GetAllPhotosAsync()
     {
         IEnumerable<Photos> photos = await this._photosService.GetAllPhotos();
+        CustomLogger.Instance.Log("This is a log message.");
         return this.Ok(photos);
     }
     
@@ -50,11 +52,6 @@ public class PhotoController : ControllerBase
     public async Task<IActionResult> GetAllPhotosForSearchAsync(string searchTerm)
     {
         IEnumerable<Photos> photos = await this._photosService.GetAllPhotosBySearch(searchTerm);
-
-        if (photos is null)
-        {
-            return this.NotFound();
-        }
 
         return this.Ok(photos);
     }

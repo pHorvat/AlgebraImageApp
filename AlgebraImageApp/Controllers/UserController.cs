@@ -1,15 +1,16 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using AlgebraImageApp.Logger;
 using AlgebraImageApp.Models;
 using AlgebraImageApp.Models.Commands;
+using AlgebraImageApp.Patterns;
 using AlgebraImageApp.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using MsSqlSimpleClient.SqlClient.Direct;
 
 namespace AlgebraImageApp.Controllers
 {
@@ -61,7 +62,6 @@ public class UserController : ControllerBase
                return this.NotFound();
           }
           
-          LoggerSingleton.Instance.Log($"Successfully retrieved user {username}.");
           return this.Ok(user);
      }
      
@@ -180,6 +180,34 @@ public class UserController : ControllerBase
                return this.BadRequest(ex.Message);
           }
      }
+     
+     [HttpPut ("updateTier")]
+     [Authorize]
+     public async Task<IActionResult> UpdateUserTierAsync(UpdateUserCommand command)
+     {
+
+          if (this.ModelState.IsValid == false)
+          {
+               return this.BadRequest(this.ModelState);
+          }
+
+          try
+          {
+               await this._userService.UpdateAsync(command);
+               var userTierSubject = new UserTierSubject();
+               var userTierObserver = new UserTierObserver();
+               userTierSubject.Attach(userTierObserver);
+
+               // Notify the observer about the user tier update
+               userTierSubject.Notify(command.Tier);
+               return this.Ok();
+          }
+          catch (ArgumentNullException ex)
+          {
+               return this.BadRequest(ex.Message);
+          }
+     }
+     
      
      [HttpDelete("{id}")]
      [Authorize]
