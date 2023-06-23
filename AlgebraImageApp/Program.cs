@@ -49,10 +49,10 @@ builder.Services.AddCors(cors =>
 });
 
 var app = builder.Build();
+app.UseSwagger();
 
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
     app.UseSwaggerUI();
 }
 app.UseAuthentication();
