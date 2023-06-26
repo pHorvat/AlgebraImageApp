@@ -16,16 +16,18 @@ public class SqlPhotosRepository : IPhotosRepository
     }
     
     
-    public async Task<int> AddPhotoAsync(int authorid, string desciption, string format, string hashtags, string url, string authorusername)
+    public async Task<int> AddPhotoAsync(int authorid, string desciption, string format, string hashtags, string url, string authorusername, DateTime upload)
     {
         AddPhotoProps props = new AddPhotoProps
         {
+            
             authorUsername = authorusername,
             AuthorId = authorid,
             Description = desciption,
             Format = format,
             Hashtags = hashtags,
-            Url = url
+            Url = url,
+            UploadTime = DateTime.Now.AddHours(5)
         };
         await this._procedureClient.ExecuteNonQueryAsync("AddPhoto", props);
         return props.IdPhoto;

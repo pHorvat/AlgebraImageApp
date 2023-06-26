@@ -10,10 +10,10 @@ public class HashtagsCheck
         {
             if (hashtags.Contains(word))
             {
-                return true;
+                return false;
             }
         }
 
-        return false;
+        return true;
     }
 }

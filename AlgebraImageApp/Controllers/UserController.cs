@@ -194,11 +194,11 @@ public class UserController : ControllerBase
           try
           {
                await this._userService.UpdateAsync(command);
+               await this._userService.UpdateLastPackageChangeAsync(command.Id);
                var userTierSubject = new UserTierSubject();
                var userTierObserver = new UserTierObserver();
                userTierSubject.Attach(userTierObserver);
 
-               // Notify the observer about the user tier update
                userTierSubject.Notify(command.Tier);
                return this.Ok();
           }

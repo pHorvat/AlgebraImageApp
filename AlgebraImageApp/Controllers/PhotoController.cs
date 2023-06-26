@@ -85,6 +85,7 @@ public class PhotoController : ControllerBase
         if (user != null && check.CanUpload(user, command.Description, command.Hashtags))
         {
             int id = await this._photosService.AddPhotoAsync(command);
+            await _userService.UpdateConsumptionAsync(true, user.Id);
             return this.Ok(id);
         }
 
@@ -96,7 +97,14 @@ public class PhotoController : ControllerBase
     [Authorize]
     public async Task<IActionResult> DeletePhotoAsync(int id)
     {
-        await this._photosService.DeletePhoto(id);
+        Photos? photo = await this._photosService.GetPhotoAsync(id);
+        if (photo != null)
+        {
+            int userId = photo.AuthorId;
+            await this._photosService.DeletePhoto(id);
+            await _userService.UpdateConsumptionAsync(false, userId);
+        }
+
         return this.Ok();
     }
     

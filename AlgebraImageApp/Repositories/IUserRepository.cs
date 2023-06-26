@@ -21,6 +21,8 @@ public interface IUserRepository
     Task UpdateUserAsync(UpdateUserProps props);
 
     Task<int> GetUserConsumptionAsync(int id);
+    Task UpdateConsumptionAsync(bool operation, int id);
+    Task UpdateLastPackageChangeAsync(int id);
 
 
 }

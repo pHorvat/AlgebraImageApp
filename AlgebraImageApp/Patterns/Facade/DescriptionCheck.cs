@@ -10,10 +10,10 @@ public class DescriptionCheck
         {
             if (description.Contains(word))
             {
-                return true;
+                return false;
             }
         }
 
-        return false;
+        return true;
     }
 }

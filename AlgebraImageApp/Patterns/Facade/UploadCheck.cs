@@ -14,17 +14,31 @@ public class UploadCheck
         bool upload = true;
         if (!_consumptionCheck.inLimit(user.Consumption, user.Tier))
         {
+            
             upload = false;
+            CustomLogger.Instance.Log("Consumption check: "+upload.ToString());
+
+            
         }else if (!_descriptionCheck.isDescriptionSafe(description))
         {
             upload = false;
+            CustomLogger.Instance.Log("description check: "+upload.ToString());
+
+            
         }else if (!_typeCheck.isRegistered(user.Type))
-        {
+        { 
             upload = false;
+            CustomLogger.Instance.Log("Type check: "+upload.ToString());
+
+           
         }else if (!_hashtagsCheck.areHashtagsSafe(hashtags))
         {
             upload = false;
+            CustomLogger.Instance.Log("hashtags check: "+upload.ToString());
+
+            
         }
+        CustomLogger.Instance.Log("Upload check: "+upload.ToString());
 
 
         return upload;

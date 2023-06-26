@@ -13,7 +13,7 @@ public class AddPhotoCommand
     public string authorUsername { get; set; }
     
     [Required] 
-    public DateTime Upload { get; set; } = DateTime.UnixEpoch;
+    public DateTime Upload { get; set; } = DateTime.Now.AddHours(2);
     
     [Required] 
     public string Format { get; set; }

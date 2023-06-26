@@ -86,7 +86,8 @@ public class PhotoService : IPhotosService
             .SetFormat(command.Format)
             .SetUrl(command.Url)
             .SetAuthorUsername(command.authorUsername)
-            .SetHashtags(command.Hashtags);
+            .SetHashtags(command.Hashtags)
+            .SetUpload(command.Upload);
 
         int id = await photoBuilder.AddPhotoAsync(_repository);
 

@@ -12,8 +12,7 @@ public class UpdateUserCommand
     [Required]
     [MaxLength(50)]
     public string Username { get; set; }
-
-
+    
     public string Type { get; set; }
 
     public string Tier { get; set; }
