@@ -86,6 +86,7 @@ public class PhotoController : ControllerBase
         {
             int id = await this._photosService.AddPhotoAsync(command);
             await _userService.UpdateConsumptionAsync(true, user.Id);
+            CustomLogger.Instance.Log(command.authorUsername + " has uploaded a new photo");
             return this.Ok(id);
         }
 
@@ -103,9 +104,13 @@ public class PhotoController : ControllerBase
             int userId = photo.AuthorId;
             await this._photosService.DeletePhoto(id);
             await _userService.UpdateConsumptionAsync(false, userId);
-        }
+            CustomLogger.Instance.Log("Photo with the id "+ id + " has been deleted");
 
-        return this.Ok();
+            return this.Ok();
+        }
+        
+        return this.BadRequest();
+        
     }
     
     [HttpPut]
@@ -120,6 +125,8 @@ public class PhotoController : ControllerBase
         try
         {
             await this._photosService.UpdatePhotoAsync(command);
+            CustomLogger.Instance.Log("Photo with the id "+ command.Id + " has been updated");
+
             return this.Ok();
         }
         catch (ArgumentNullException ex)

@@ -8,8 +8,7 @@ public sealed class CustomLogger
 
     private CustomLogger()
     {
-        logFilePath = "log.txt"; // Specify the desired log file path here
-
+        logFilePath = "log.txt";
     }
 
     public static CustomLogger Instance

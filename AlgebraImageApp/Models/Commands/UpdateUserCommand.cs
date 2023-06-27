@@ -16,11 +16,5 @@ public class UpdateUserCommand
     public string Type { get; set; }
 
     public string Tier { get; set; }
-    /*
-    [MinLength(6)]
-    public string Password { get; set; }
 
-    public int Consumption { get; set; }
-    
-    public DateTime LastPackageChange { get; set; }*/
 }

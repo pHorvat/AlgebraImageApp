@@ -4,13 +4,6 @@ namespace AlgebraImageApp.Models.Database;
 
 public class DbUser
 {
-    /* public int Id { get; set; }
-    public string username { get; set; } = string.Empty;
-    public string password { get; set; } = string.Empty;
-    public UserRole Type { get; set; } 
-    public UserTier Tier { get; set; } 
-    public int consumption { get; set; }
-    public DateTime lastPackageChange { get; set; }*/
     
     [SqlIdentity]
     [SqlColumnName("id")]

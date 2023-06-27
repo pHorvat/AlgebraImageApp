@@ -80,6 +80,7 @@ public class UserController : ControllerBase
           
           
           int id = await this._userService.CreateAsync(command);
+          CustomLogger.Instance.Log(command.Username + " has been registered.");
           return this.Ok(id);
      }
      
@@ -137,12 +138,12 @@ public class UserController : ControllerBase
                }
           };
 
-
+          CustomLogger.Instance.Log(command.Username + " has logged in.");
           return this.Ok(response);
      }
      
      [HttpPost("logout")]
-     [AllowAnonymous] // Add the Authorize attribute to ensure the user is authenticated
+     [AllowAnonymous] 
      public IActionResult Logout()
      {
           return Ok();
@@ -156,6 +157,8 @@ public class UserController : ControllerBase
           {
                return this.BadRequest(this.ModelState);
           }
+          
+          CustomLogger.Instance.Log(command.Username + " has been created.");
 
           int id = await this._userService.CreateAsync(command);
           return this.Ok(id);
@@ -173,6 +176,7 @@ public class UserController : ControllerBase
           try
           {
                await this._userService.UpdateAsync(command);
+               CustomLogger.Instance.Log(command.Username + " has been updated.");
                return this.Ok();
           }
           catch (ArgumentNullException ex)
@@ -194,12 +198,13 @@ public class UserController : ControllerBase
           try
           {
                await this._userService.UpdateAsync(command);
-               await this._userService.UpdateLastPackageChangeAsync(command.Id);
                var userTierSubject = new UserTierSubject();
-               var userTierObserver = new UserTierObserver();
+               var userTierObserver = new UserTierObserver(_userService);
                userTierSubject.Attach(userTierObserver);
 
-               userTierSubject.Notify(command.Tier);
+               userTierSubject.Notify(command.Id);
+               CustomLogger.Instance.Log(command.Username + " has updated the tier to "+command.Tier);
+
                return this.Ok();
           }
           catch (ArgumentNullException ex)
@@ -214,6 +219,8 @@ public class UserController : ControllerBase
      public async Task<IActionResult> DeleteUserAsync(int id)
      {
           await this._userService.DeleteAsync(id);
+          CustomLogger.Instance.Log("User with id "+ id +" has been deleted.");
+
           return this.Ok();
      }
           
