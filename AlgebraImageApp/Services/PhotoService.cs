@@ -6,7 +6,7 @@ using AlgebraImageApp.Repositories;
 
 namespace AlgebraImageApp.Services;
 
-public class PhotoService : IPhotosService
+public class PhotoService : IPhotoRetrievalService, IPhotoModificationService
 {
 
     private readonly IPhotosRepository _repository;

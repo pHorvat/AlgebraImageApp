@@ -1,33 +1,47 @@
-﻿using AlgebraImageApp.Models;
+﻿using AlgebraImageApp.Aspect;
+using AlgebraImageApp.Models;
 using AlgebraImageApp.Models.Commands;
 using AlgebraImageApp.Patterns;
 using AlgebraImageApp.Patterns.Facade;
 using AlgebraImageApp.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Prometheus.Client;
 
 namespace AlgebraImageApp.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
 [Authorize]
+
 public class PhotoController : ControllerBase
 {
-    private IPhotosService _photosService;
+    private IPhotoRetrievalService _photoRetrievalService;
+    private IPhotoModificationService _photoModificationService;
     private IUserService _userService;
-    
-    public PhotoController(IPhotosService photosService, IUserService userService)
+    public ICounter uploadedPhotos = Metrics.DefaultFactory.CreateCounter("PhotoUpload", "Number of uploaded photos");
+    public ICounter deletedPhotos = Metrics.DefaultFactory.CreateCounter("PhotoDelete", "Number of deleted photos");
+
+    [ExceptionHandlingAspect]
+    public PhotoController(IPhotoRetrievalService photoRetrievalService,IPhotoModificationService photoModificationService, IUserService userService)
     {
-        this._photosService = photosService;
+        this._photoRetrievalService = photoRetrievalService;
+        this._photoModificationService = photoModificationService;
         _userService = userService;
 
+        //divider(10,0);
+    }
+
+    public void divider(int a, int b)
+    {
+        Console.WriteLine(a/b);
     }
 
     [HttpGet]
     [AllowAnonymous]
     public async Task<IActionResult> GetAllPhotosAsync()
     {
-        IEnumerable<Photos> photos = await this._photosService.GetAllPhotos();
+        IEnumerable<Photos> photos = await this._photoRetrievalService.GetAllPhotos();
         CustomLogger.Instance.Log("This is a log message.");
         return this.Ok(photos);
     }
@@ -36,7 +50,7 @@ public class PhotoController : ControllerBase
     [AllowAnonymous]
     public async Task<IActionResult> GetAllPhotosAsync(int id)
     {
-        Photos? photo = await this._photosService.GetPhotoAsync(id);
+        Photos? photo = await this._photoRetrievalService.GetPhotoAsync(id);
 
         if (photo is null)
         {
@@ -51,7 +65,7 @@ public class PhotoController : ControllerBase
     [AllowAnonymous]
     public async Task<IActionResult> GetAllPhotosForSearchAsync(string searchTerm)
     {
-        IEnumerable<Photos> photos = await this._photosService.GetAllPhotosBySearch(searchTerm);
+        IEnumerable<Photos> photos = await this._photoRetrievalService.GetAllPhotosBySearch(searchTerm);
 
         return this.Ok(photos);
     }
@@ -60,7 +74,7 @@ public class PhotoController : ControllerBase
     [AllowAnonymous]
     public async Task<IActionResult> GetAllPhotosOfUserAsync(int id)
     {
-        IEnumerable<Photos> photos = await this._photosService.GetAllPhotosOfUser(id);
+        IEnumerable<Photos> photos = await this._photoRetrievalService.GetAllPhotosOfUser(id);
 
         if (photos is null)
         {
@@ -71,9 +85,11 @@ public class PhotoController : ControllerBase
     }
     
     [HttpPost]
-    [Authorize]
+    [AllowAnonymous]
+    //[Authorize]
     public async Task<IActionResult> CreatePhotoAsync(AddPhotoCommand command)
     {
+        uploadedPhotos.Inc();
         User? user = await this._userService.GetUsernameAsync(command.authorUsername);
         UploadCheck check = new UploadCheck();
         
@@ -84,7 +100,7 @@ public class PhotoController : ControllerBase
 
         if (user != null && check.CanUpload(user, command.Description, command.Hashtags))
         {
-            int id = await this._photosService.AddPhotoAsync(command);
+            int id = await this._photoModificationService.AddPhotoAsync(command);
             await _userService.UpdateConsumptionAsync(true, user.Id);
             CustomLogger.Instance.Log(command.authorUsername + " has uploaded a new photo");
             return this.Ok(id);
@@ -95,14 +111,16 @@ public class PhotoController : ControllerBase
     }
     
     [HttpDelete("{id}")]
-    [Authorize]
+    [AllowAnonymous]
+    //[Authorize]
     public async Task<IActionResult> DeletePhotoAsync(int id)
     {
-        Photos? photo = await this._photosService.GetPhotoAsync(id);
+        deletedPhotos.Inc();
+        Photos? photo = await this._photoRetrievalService.GetPhotoAsync(id);
         if (photo != null)
         {
             int userId = photo.AuthorId;
-            await this._photosService.DeletePhoto(id);
+            await this._photoModificationService.DeletePhoto(id);
             await _userService.UpdateConsumptionAsync(false, userId);
             CustomLogger.Instance.Log("Photo with the id "+ id + " has been deleted");
 
@@ -114,7 +132,8 @@ public class PhotoController : ControllerBase
     }
     
     [HttpPut]
-    [Authorize]
+    [AllowAnonymous]
+    //[Authorize]
     public async Task<IActionResult> UpdatePhotoAsync(UpdatePhotoCommand command)
     {
         if (this.ModelState.IsValid == false)
@@ -124,7 +143,7 @@ public class PhotoController : ControllerBase
 
         try
         {
-            await this._photosService.UpdatePhotoAsync(command);
+            await this._photoModificationService.UpdatePhotoAsync(command);
             CustomLogger.Instance.Log("Photo with the id "+ command.Id + " has been updated");
 
             return this.Ok();

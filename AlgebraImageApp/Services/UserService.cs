@@ -14,13 +14,6 @@ public class UserService : IUserService
         this._repository = repository;
     }
     
-    /* public int Id { get; set; }
-    public string username { get; set; } = string.Empty;
-    public string password { get; set; } = string.Empty;
-    public UserRole Type { get; set; } 
-    public UserTier Tier { get; set; } 
-    public int consumption { get; set; }
-    public DateTime lastPackageChange { get; set; }*/
     
     public async Task<IEnumerable<User>> GetAllAsync()
     {
@@ -36,11 +29,11 @@ public class UserService : IUserService
         });
     }
 
-    public async Task<User?> GetAsync(int id)
+    public async Task<User?> GetAsync(int id)  //Functional programming
     {
         return (await this._repository.GetAllUsersAsync())
             .Where(dbUser => dbUser.Id == id)
-            .Select(dbUser => new User
+            .Select(dbUser => new User 
             {
                 Id = dbUser.Id,
                 Username = dbUser.Username,
@@ -52,6 +45,36 @@ public class UserService : IUserService
             })
             .SingleOrDefault();
     }
+    
+    /* Non-functional:
+     public async Task<User?> GetAsync(int id)
+    {
+    var dbUsers = await this._repository.GetAllUsersAsync();
+
+    User? foundUser = null;
+    for (int i = 0; i < dbUsers.Count; i++)
+    {
+        var dbUser = dbUsers[i];
+        if (dbUser.Id == id)
+        {
+            foundUser = new User
+            {
+                Id = dbUser.Id,
+                Username = dbUser.Username,
+                Password = dbUser.Password,
+                Type = dbUser.Type,
+                Tier = dbUser.Tier,
+                Consumption = dbUser.Consumption,
+                LastPackageChange = dbUser.LastPackageChange
+            };
+            break;
+        }
+    }
+
+    return foundUser;
+    }
+
+    */
     
     public async Task<User?> GetUsernameAsync(string username)
     {
@@ -121,7 +144,7 @@ public class UserService : IUserService
         await this._repository.UpdateLastPackageChangeAsync(id);
     }
     
-    public async Task<int> GetConsumption(int id)
+    public async Task<int> GetConsumption(string id)
     {
         int consumption = await this._repository.GetUserConsumptionAsync(id);
         return consumption;

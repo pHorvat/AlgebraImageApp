@@ -1,5 +1,5 @@
 ﻿using System.Data;
-using AlgebraImageApp.Models;
+using AlgebraImageApp.Aspect;
 using AlgebraImageApp.Models.Database;
 using AlgebraImageApp.Models.Procedures;
 using MsSqlSimpleClient.Converters;
@@ -44,15 +44,17 @@ public class SqlUserRepository : IUserRepository
         return data.ConvertTo<DbUser>();
     }
     
-    public async Task<int> GetUserConsumptionAsync(int id)
+    public async Task<int> GetUserConsumptionAsync(string id)
     {
-        DataSet consumption = (await _directClient.ExecuteQueryAsync("select * from photos where author_id="+id+";"));
+        //DataSet consumption = (await _directClient.ExecuteQueryAsync("select * from photos where author_id="+id+";"));
+        DataSet consumption = await this._procedureClient.ExecuteQueryAsync("GetConsumption",new { @UserId = id});
         IEnumerable<DbUser> cons = consumption.ConvertTo<DbUser>();
         Console.WriteLine(cons.Count());
         return cons.Count();
 
     }
     
+    [LoggingAspect]
     public async Task UpdateConsumptionAsync(bool operation, int id)
     {
         if (operation)

@@ -13,6 +13,6 @@ public interface IUserService
     Task DeleteAsync(int id);
     Task UpdateLastPackageChangeAsync(int id);
     Task UpdateConsumptionAsync(bool operation ,int id);
-    Task<int> GetConsumption(int id);
+    Task<int> GetConsumption(string id);
 
 }

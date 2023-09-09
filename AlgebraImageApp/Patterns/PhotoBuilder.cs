@@ -2,6 +2,7 @@
 
 namespace AlgebraImageApp.Patterns;
 
+[Serializable]
 public class PhotoBuilder
 {
     private int _authorId;

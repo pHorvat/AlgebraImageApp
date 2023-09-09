@@ -1,16 +1,17 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿using System.Diagnostics.Metrics;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using AlgebraImageApp.Aspect;
 using AlgebraImageApp.Models;
 using AlgebraImageApp.Models.Commands;
 using AlgebraImageApp.Patterns;
 using AlgebraImageApp.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using MsSqlSimpleClient.SqlClient.Direct;
+using Prometheus;
+using Prometheus.Client;
 
 namespace AlgebraImageApp.Controllers
 {
@@ -22,14 +23,24 @@ public class UserController : ControllerBase
 {
      private IUserService _userService;
      private readonly string _secretKey = "ZcK#K5KdDtq8Bx%%ByhKg9BhUrtw^M6aXrnUYwQEPWn9";
+     public ICounter userActions = Metrics.DefaultFactory.CreateCounter("UserActions", "Number of user actions");
+     public IGauge usersLoggedIn = Metrics.DefaultFactory.CreateGauge("UsersLoggedIn", "Number of user currently logged in");
+     
+
+     
+
 
      public UserController(IUserService userService)
      {
+          //SOLID:  Dependency Inversion Principle,
+          //as the high-level class (UserController) depends on an abstraction (IUserService) rather than a concrete implementation
           this._userService = userService;
+          
      }
 
      [HttpGet]
      [AllowAnonymous]
+     [LoggingAspect]
      public async Task<IActionResult> GetAllUsersAsync()
      {
           IEnumerable<User> user = await this._userService.GetAllAsync();
@@ -39,6 +50,7 @@ public class UserController : ControllerBase
      
      [HttpGet("{id}")]
      [AllowAnonymous]
+     [LoggingAspect]
      public async Task<IActionResult> GetAllUsersAsync(int id)
      {
           User? user = await this._userService.GetAsync(id);
@@ -53,6 +65,7 @@ public class UserController : ControllerBase
      
      [HttpGet("u/{username}")]
      [AllowAnonymous]
+     [LoggingAspect]
      public async Task<IActionResult> FetchUserAsync(string username)
      {
           User? user = await this._userService.GetUsernameAsync(username);
@@ -68,8 +81,10 @@ public class UserController : ControllerBase
      
      [HttpPost("register")]
      [AllowAnonymous]
+     [LoggingAspect]
      public async Task<IActionResult> RegisterAsync(CreateUserCommand command)
      {
+          userActions.Inc(1);
           if (this.ModelState.IsValid == false)
           {
                return this.BadRequest(this.ModelState);
@@ -86,8 +101,11 @@ public class UserController : ControllerBase
      
      [HttpPost("login")]
      [AllowAnonymous]
+     [LoggingAspect]
      public async Task<IActionResult> LoginAsync(CreateUserCommand command)
      {
+          userActions.Inc(1);
+          usersLoggedIn.Inc();
           if (this.ModelState.IsValid == false)
           {
                return this.BadRequest(this.ModelState);
@@ -124,6 +142,7 @@ public class UserController : ControllerBase
           // Create a custom response object
           var response = new
           {
+               userPassword=user.Password,
                userType = user.Type,
                userTier = user.Tier,
                userId = user.Id,
@@ -142,17 +161,22 @@ public class UserController : ControllerBase
           return this.Ok(response);
      }
      
+     
      [HttpPost("logout")]
      [AllowAnonymous] 
      public IActionResult Logout()
      {
+          userActions.Inc(1);
+          usersLoggedIn.Dec();
           return Ok();
      }
      
      [HttpPost]
-     [Authorize]
+     [AllowAnonymous]
+     //[Authorize]
      public async Task<IActionResult> CreateUserAsync(CreateUserCommand command)
      {
+          userActions.Inc(1);
           if (this.ModelState.IsValid == false)
           {
                return this.BadRequest(this.ModelState);
@@ -165,9 +189,11 @@ public class UserController : ControllerBase
      }
      
      [HttpPut]
-     [Authorize]
+     [AllowAnonymous]
+     //[Authorize]
      public async Task<IActionResult> UpdateUserAsync(UpdateUserCommand command)
      {
+          userActions.Inc(1);
           if (this.ModelState.IsValid == false)
           {
                return this.BadRequest(this.ModelState);
@@ -186,10 +212,11 @@ public class UserController : ControllerBase
      }
      
      [HttpPut ("updateTier")]
-     [Authorize]
+     [AllowAnonymous]
+     //[Authorize]
      public async Task<IActionResult> UpdateUserTierAsync(UpdateUserCommand command)
      {
-
+          userActions.Inc(1);
           if (this.ModelState.IsValid == false)
           {
                return this.BadRequest(this.ModelState);
@@ -215,9 +242,11 @@ public class UserController : ControllerBase
      
      
      [HttpDelete("{id}")]
-     [Authorize]
+     [AllowAnonymous]
+     //[Authorize]
      public async Task<IActionResult> DeleteUserAsync(int id)
      {
+          userActions.Inc(1);
           await this._userService.DeleteAsync(id);
           CustomLogger.Instance.Log("User with id "+ id +" has been deleted.");
 
@@ -226,7 +255,7 @@ public class UserController : ControllerBase
           
      [HttpGet("consumption/{id}")]
      [AllowAnonymous]
-     public async Task<IActionResult> GetUserConsumption(int id)
+     public async Task<IActionResult> GetUserConsumption(string id)
      {
           int consumption = await this._userService.GetConsumption(id);
           return this.Ok(consumption);
