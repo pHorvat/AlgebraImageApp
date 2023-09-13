@@ -46,8 +46,8 @@ public class SqlUserRepository : IUserRepository
     
     public async Task<int> GetUserConsumptionAsync(string id)
     {
-        //DataSet consumption = (await _directClient.ExecuteQueryAsync("select * from photos where author_id="+id+";"));
-        DataSet consumption = await this._procedureClient.ExecuteQueryAsync("GetConsumption",new { @UserId = id});
+        DataSet consumption = (await _directClient.ExecuteQueryAsync($"select * from photos where author_id={id};"));
+        //DataSet consumption = await this._procedureClient.ExecuteQueryAsync("GetConsumption",new { @username = id});
         IEnumerable<DbUser> cons = consumption.ConvertTo<DbUser>();
         Console.WriteLine(cons.Count());
         return cons.Count();

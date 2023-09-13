@@ -24,6 +24,7 @@ var ser2 = Serialization.SerializeObject(badSer);
 Console.WriteLine(Serialization.DeserializeObject<PhotoBuilder>(ser));
 //Console.WriteLine(Serialization.DeserializeObject<BadClass>(ser2));
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSingleton<ISqlProcedureClient>(new SqlProcedureClient("Server=algebrainstaserv.database.windows.net;Database=AlgebraInstaDb;User Id=pHorva;Password=m354Hd9DtMWf27azAFq;"));

@@ -10,6 +10,7 @@ using AlgebraImageApp.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using Prometheus;
 using Prometheus.Client;
 
@@ -23,11 +24,10 @@ public class UserController : ControllerBase
 {
      private IUserService _userService;
      private readonly string _secretKey = "ZcK#K5KdDtq8Bx%%ByhKg9BhUrtw^M6aXrnUYwQEPWn9";
+     private readonly string _refreshSecretKey = "z8GUYJve6tzvEx0yAPaAGQxsfMuKTxHCaF82fYbJ";
      public ICounter userActions = Metrics.DefaultFactory.CreateCounter("UserActions", "Number of user actions");
      public IGauge usersLoggedIn = Metrics.DefaultFactory.CreateGauge("UsersLoggedIn", "Number of user currently logged in");
-     
-
-     
+     private static List<string> refreshTokens = new List<string>();
 
 
      public UserController(IUserService userService)
@@ -35,11 +35,26 @@ public class UserController : ControllerBase
           //SOLID:  Dependency Inversion Principle,
           //as the high-level class (UserController) depends on an abstraction (IUserService) rather than a concrete implementation
           this._userService = userService;
-          
+          refreshTokens.Add("test123");
+     }
+     
+     private bool IsValid(string token)
+     {
+          JwtSecurityToken jwtSecurityToken;
+          try
+          {
+               jwtSecurityToken = new JwtSecurityToken(token);
+          }
+          catch (Exception)
+          {
+               return false;
+          }
+    
+          return jwtSecurityToken.ValidTo > DateTime.UtcNow;
      }
 
      [HttpGet]
-     [AllowAnonymous]
+     [Authorize]
      [LoggingAspect]
      public async Task<IActionResult> GetAllUsersAsync()
      {
@@ -49,7 +64,7 @@ public class UserController : ControllerBase
      
      
      [HttpGet("{id}")]
-     [AllowAnonymous]
+     [Authorize]
      [LoggingAspect]
      public async Task<IActionResult> GetAllUsersAsync(int id)
      {
@@ -64,7 +79,7 @@ public class UserController : ControllerBase
      }
      
      [HttpGet("u/{username}")]
-     [AllowAnonymous]
+     [Authorize]
      [LoggingAspect]
      public async Task<IActionResult> FetchUserAsync(string username)
      {
@@ -114,12 +129,15 @@ public class UserController : ControllerBase
           User? user = await this._userService.GetUsernameAsync(command.Username);
           if (user?.Username != command.Username)
           {
-               return BadRequest("Wrong username!");
+               //return BadRequest("Wrong username!");
+               return BadRequest("Wrong username or password!");
           }
 
           if (!BCrypt.Net.BCrypt.Verify(command.Password, user.Password))
           {
-               return BadRequest("Wrong password");
+               //return BadRequest("Wrong password");
+               return BadRequest("Wrong username or password!");
+
           }
 
           List<Claim> claims = new List<Claim>
@@ -133,16 +151,29 @@ public class UserController : ControllerBase
                SecurityAlgorithms.HmacSha256Signature);
           var token = new JwtSecurityToken(
                claims: claims,
-               expires: DateTime.Now.AddDays(1),
+               expires: DateTime.Now.AddSeconds(5),
                signingCredentials: cred
+          );
+          
+          var refreshKey =new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
+               _refreshSecretKey));
+          var refreshCred = new SigningCredentials(refreshKey, 
+               SecurityAlgorithms.HmacSha256Signature);
+          var refreshToken = new JwtSecurityToken(
+               expires: DateTime.Now.AddDays(7),
+               signingCredentials: refreshCred
           );
 
           var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+          var refreshJwt = new JwtSecurityTokenHandler().WriteToken(refreshToken);
+          Console.WriteLine(refreshJwt);
+          refreshTokens.Add(refreshJwt);
+          Console.WriteLine(refreshTokens.Count);
           
-          // Create a custom response object
+          
           var response = new
           {
-               userPassword=user.Password,
+               //userPassword=user.Password,
                userType = user.Type,
                userTier = user.Tier,
                userId = user.Id,
@@ -150,6 +181,7 @@ public class UserController : ControllerBase
                message = "logged in successfully",
                data = new { username = command.Username },
                accessToken = jwt,
+               refreshToken=refreshJwt,
                username = command.Username,
                user= new
                {
@@ -163,7 +195,7 @@ public class UserController : ControllerBase
      
      
      [HttpPost("logout")]
-     [AllowAnonymous] 
+     [Authorize] 
      public IActionResult Logout()
      {
           userActions.Inc(1);
@@ -171,9 +203,54 @@ public class UserController : ControllerBase
           return Ok();
      }
      
+     [HttpPost("refresh")]
+     [AllowAnonymous] 
+     public IActionResult RefreshToken()
+     {
+          string refreshToken = Request.Form["token"];
+          Console.WriteLine(refreshToken);
+          Console.WriteLine(refreshTokens.Count);
+          foreach(var month in refreshTokens)
+          {
+               Console.WriteLine(month);
+          }
+
+          var handler = new JwtSecurityTokenHandler();
+          var jsonToken = handler.ReadToken(refreshToken) as JwtSecurityToken;
+          if (refreshTokens.Contains(refreshToken))
+          {
+               if (!IsValid(refreshToken))
+               {
+                    Console.WriteLine("Expired token");
+                    return BadRequest("Expired or invalid token");
+               }
+               else
+               {
+                    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
+                         _secretKey));
+
+                    var cred = new SigningCredentials(key, 
+                         SecurityAlgorithms.HmacSha256Signature);
+                    var token = new JwtSecurityToken(
+                         expires: DateTime.Now.AddHours(1),
+                         signingCredentials: cred
+                    );
+                    var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+                    var response = new
+                    {
+                         accessToken = jwt
+                    };
+                    return Ok(response);
+
+               }
+          }
+          
+          Console.WriteLine("No token in list");
+          return BadRequest("Expired or invalid token");
+     }
+     
      [HttpPost]
-     [AllowAnonymous]
-     //[Authorize]
+     [Authorize]
      public async Task<IActionResult> CreateUserAsync(CreateUserCommand command)
      {
           userActions.Inc(1);
@@ -189,8 +266,7 @@ public class UserController : ControllerBase
      }
      
      [HttpPut]
-     [AllowAnonymous]
-     //[Authorize]
+     [Authorize]
      public async Task<IActionResult> UpdateUserAsync(UpdateUserCommand command)
      {
           userActions.Inc(1);
@@ -212,8 +288,7 @@ public class UserController : ControllerBase
      }
      
      [HttpPut ("updateTier")]
-     [AllowAnonymous]
-     //[Authorize]
+     [Authorize]
      public async Task<IActionResult> UpdateUserTierAsync(UpdateUserCommand command)
      {
           userActions.Inc(1);
@@ -242,8 +317,7 @@ public class UserController : ControllerBase
      
      
      [HttpDelete("{id}")]
-     [AllowAnonymous]
-     //[Authorize]
+     [Authorize]
      public async Task<IActionResult> DeleteUserAsync(int id)
      {
           userActions.Inc(1);

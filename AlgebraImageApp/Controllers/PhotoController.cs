@@ -38,7 +38,7 @@ public class PhotoController : ControllerBase
     }
 
     [HttpGet]
-    [AllowAnonymous]
+    [Authorize]
     public async Task<IActionResult> GetAllPhotosAsync()
     {
         IEnumerable<Photos> photos = await this._photoRetrievalService.GetAllPhotos();
@@ -47,7 +47,7 @@ public class PhotoController : ControllerBase
     }
     
     [HttpGet("{id}")]
-    [AllowAnonymous]
+    [Authorize]
     public async Task<IActionResult> GetAllPhotosAsync(int id)
     {
         Photos? photo = await this._photoRetrievalService.GetPhotoAsync(id);
@@ -62,7 +62,7 @@ public class PhotoController : ControllerBase
     
     
     [HttpGet("search/{searchTerm}")]
-    [AllowAnonymous]
+    [Authorize]
     public async Task<IActionResult> GetAllPhotosForSearchAsync(string searchTerm)
     {
         IEnumerable<Photos> photos = await this._photoRetrievalService.GetAllPhotosBySearch(searchTerm);
@@ -71,7 +71,7 @@ public class PhotoController : ControllerBase
     }
     
     [HttpGet("user/{id}")]
-    [AllowAnonymous]
+    [Authorize]
     public async Task<IActionResult> GetAllPhotosOfUserAsync(int id)
     {
         IEnumerable<Photos> photos = await this._photoRetrievalService.GetAllPhotosOfUser(id);
@@ -85,7 +85,7 @@ public class PhotoController : ControllerBase
     }
     
     [HttpPost]
-    [AllowAnonymous]
+    [Authorize]
     //[Authorize]
     public async Task<IActionResult> CreatePhotoAsync(AddPhotoCommand command)
     {
@@ -111,7 +111,7 @@ public class PhotoController : ControllerBase
     }
     
     [HttpDelete("{id}")]
-    [AllowAnonymous]
+    [Authorize]
     //[Authorize]
     public async Task<IActionResult> DeletePhotoAsync(int id)
     {
@@ -132,7 +132,7 @@ public class PhotoController : ControllerBase
     }
     
     [HttpPut]
-    [AllowAnonymous]
+    [Authorize]
     //[Authorize]
     public async Task<IActionResult> UpdatePhotoAsync(UpdatePhotoCommand command)
     {
